@@ -14,7 +14,7 @@ sc query postgresql-x64-16 >nul 2>&1 && net start postgresql-x64-16 >nul 2>&1
 sc query postgresql-x64-15 >nul 2>&1 && net start postgresql-x64-15 >nul 2>&1
 
 echo [1/3] Backend (NestJS)...
-start "WRShop BE" cmd /k "cd /d C:\Users\HP VICTUS\Documents\Quocanh\wrshop\api && npm run start:dev"
+start "WRShop BE" cmd /k "cd /d C:\Users\HP VICTUS\Documents\Quocanh\wrshop_BE && npm run start:dev"
 
 timeout /t 2 /nobreak >nul
 

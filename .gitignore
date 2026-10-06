@@ -14,5 +14,3 @@ tmp-*.py
 tmp-*.json
 web/node_modules
 web/dist
-api/node_modules
-api/dist
