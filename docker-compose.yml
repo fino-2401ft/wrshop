@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wrshop
+      POSTGRES_PASSWORD: wrshop
+      POSTGRES_DB: wrshop
+    ports:
+      - "5433:5432"
+    volumes:
+      - wrshop_pg:/var/lib/postgresql/data
+
+volumes:
+  wrshop_pg:
