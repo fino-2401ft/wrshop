@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: "Be Vietnam Pro", sans-serif;
+  color: #f8eef4;
+  background-color: #120810;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 78% 12%, rgba(255, 228, 240, 0.7) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 88% 68%, rgba(255, 255, 255, 0.45) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 24% 78%, rgba(255, 196, 220, 0.55) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 62% 42%, rgba(255, 255, 255, 0.35) 0 1px, transparent 1.5px),
+    radial-gradient(ellipse at 50% -12%, rgba(244, 114, 182, 0.38), transparent 48%),
+    radial-gradient(ellipse at 100% 8%, rgba(251, 113, 133, 0.2), transparent 34%),
+    radial-gradient(ellipse at 0% 100%, rgba(190, 24, 93, 0.24), transparent 42%),
+    radial-gradient(ellipse at 86% 108%, rgba(244, 114, 182, 0.18), transparent 38%),
+    radial-gradient(ellipse at center, transparent 38%, rgba(10, 2, 6, 0.72) 100%),
+    linear-gradient(165deg, #2a1020 0%, #180812 48%, #10060c 100%);
+  background-attachment: fixed;
+}
+
+.petals {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.petal {
+  position: absolute;
+  top: -16px;
+  border-radius: 70% 12% 70% 12%;
+  opacity: 0.8;
+  animation-name: petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(var(--drift), 108vh, 0) rotate(var(--spin));
+  }
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  color: #0f172a;
+  background: #fff;
+}
