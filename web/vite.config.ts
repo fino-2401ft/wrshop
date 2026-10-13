@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: ['furywr.com', 'www.furywr.com'],
+    allowedHosts: ['furywr.com', 'www.furywr.com', '100.103.147.75'],
     proxy: {
       '/api': 'http://localhost:3000',
       '/uploads': 'http://localhost:3000',
@@ -20,7 +20,7 @@ export default defineConfig({
   preview: {
     host: '127.0.0.1',
     port: 5173,
-    allowedHosts: ['furywr.com', 'www.furywr.com'],
+    allowedHosts: ['furywr.com', 'www.furywr.com', '100.103.147.75'],
     proxy: {
       '/api': 'http://127.0.0.1:3000',
       '/uploads': 'http://127.0.0.1:3000',

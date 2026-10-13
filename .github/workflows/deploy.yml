@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-wrshop
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, wrshop-fe]
+    timeout-minutes: 30
+    steps:
+      - name: Build and restart frontend
+        run: |
+          set -euo pipefail
+          cd /home/dev/wrshop
+          git fetch origin main
+          git reset --hard origin/main
+          cd web
+          npm ci
+          npm run build
+          sudo /usr/bin/systemctl restart wrshop-fe
+          sudo /usr/bin/systemctl is-active --quiet wrshop-fe
