@@ -4,7 +4,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { logoutAdmin } from '../api';
 import { WelcomePopup } from './WelcomePopup';
 
-const FANPAGE = 'https://www.facebook.com/shoptocchienquocanh';
+const FANPAGE = 'https://www.facebook.com/qatcs';
 const DISCORD = 'https://discord.gg/PjjuCPpqm5';
 
 const FOOTER_COLUMNS = [

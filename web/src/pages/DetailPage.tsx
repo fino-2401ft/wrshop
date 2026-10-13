@@ -44,15 +44,34 @@ export function DetailPage() {
           title={categoryPageTitle(account.categorySlug ?? account.category, account.categoryTitle ?? account.category)}
           to={`/shop/${account.categorySlug ?? account.category}`}
         />
-        <section className="mt-3 rounded-2xl border border-[#f472b644] bg-[#1c1018] p-4 text-[#f8eef4]">
-          <div className="overflow-hidden rounded-xl bg-black/30">
+        <section
+          className={
+            account.isHot
+              ? 'detail-hot mt-3 rounded-2xl border border-amber-300/80 bg-[#1a1408] p-4 text-[#fff8e7]'
+              : 'mt-3 rounded-2xl border border-[#f472b644] bg-[#1c1018] p-4 text-[#f8eef4]'
+          }
+        >
+          <div
+            className={
+              account.isHot
+                ? 'hot-image-frame overflow-hidden rounded-xl bg-amber-950/40'
+                : 'overflow-hidden rounded-xl bg-black/30'
+            }
+          >
             {account.coverUrl ? (
               <img src={account.coverUrl} alt="" className="block h-auto w-full" />
             ) : (
               <div className="grid aspect-video place-items-center text-sm text-slate-400">Chưa có ảnh</div>
             )}
           </div>
-          <p className="mt-3 text-sm text-slate-400">#{account.publicCode}</p>
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <p className={`text-sm ${account.isHot ? 'text-amber-200/70' : 'text-slate-400'}`}>#{account.publicCode}</p>
+            {account.isHot && (
+              <span className="hot-badge rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1a1200]">
+                Hot Account
+              </span>
+            )}
+          </div>
           {account.description && <p className="mt-2 text-sm leading-6 text-slate-300">{account.description}</p>}
           <p className="mt-3 text-2xl font-bold">{formatPrice(account.price)}</p>
           <div className="mt-4 grid gap-2 text-sm">
@@ -90,14 +109,20 @@ export function DetailPage() {
 
       <section className="mt-6 lg:mt-0">
         <h2 className="text-center text-lg font-semibold tracking-wide text-white">HÌNH ẢNH TÀI KHOẢN</h2>
-        <div className="mx-auto mt-1 h-0.5 w-16 bg-[#f472b6]" />
+        <div className={`mx-auto mt-1 h-0.5 w-16 ${account.isHot ? 'bg-amber-400' : 'bg-[#f472b6]'}`} />
         <div className="mt-5 flex flex-col gap-4">
           {gallery.length === 0 && (
             <p className="text-center text-sm text-slate-400">Acc này chưa có ảnh chi tiết.</p>
           )}
-          {gallery.map((image) => (
-            <img key={image.id} src={image.url} alt="" className="w-full rounded-xl bg-white shadow-sm" />
-          ))}
+          {gallery.map((image) =>
+            account.isHot ? (
+              <div key={image.id} className="hot-image-frame overflow-hidden rounded-xl bg-amber-950/30">
+                <img src={image.url} alt="" className="w-full" />
+              </div>
+            ) : (
+              <img key={image.id} src={image.url} alt="" className="w-full rounded-xl bg-white shadow-sm" />
+            ),
+          )}
         </div>
       </section>
 

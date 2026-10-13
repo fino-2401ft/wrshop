@@ -40,6 +40,7 @@ type FormState = {
   cost: string;
   profit: string;
   consignment: boolean;
+  isHot: boolean;
   dueAt: string;
   specs: Required<AccountSpecs>;
 };
@@ -58,6 +59,7 @@ const EMPTY: FormState = {
   cost: '',
   profit: '',
   consignment: false,
+  isHot: false,
   dueAt: '',
   specs: EMPTY_SPECS,
 };
@@ -116,6 +118,7 @@ export function AccountFormPage() {
       cost: String(account.data.cost ?? 0),
       profit: String(stored),
       consignment: account.data.consignment ?? false,
+      isHot: account.data.isHot ?? false,
       dueAt: account.data.dueAt ? toInputDate(account.data.dueAt) : '',
       specs: { ...EMPTY_SPECS, ...account.data.specs },
     });
@@ -137,6 +140,7 @@ export function AccountFormPage() {
         cost: Number(form.cost || 0),
         profit: Number(form.profit || 0),
         consignment: form.consignment,
+        isHot: form.isHot,
         dueAt: form.status === 'RESERVED' ? form.dueAt : undefined,
         specs: form.specs,
       };
@@ -399,14 +403,27 @@ export function AccountFormPage() {
           />
           <span className="mt-1 block text-xs text-slate-400">Tự tính bằng giá bán trừ giá vốn. Có thể sửa tay.</span>
         </label>
-        <label className="flex items-center gap-2 self-end text-sm">
-          <input
-            type="checkbox"
-            checked={form.consignment}
-            onChange={(event) => setForm({ ...form, consignment: event.target.checked })}
-          />
-          Bán hộ?
-        </label>
+        <div className="md:col-span-2 flex flex-wrap gap-4 rounded-xl border border-amber-400/40 bg-amber-500/10 px-4 py-3">
+          <label className="flex items-center gap-2 text-sm text-[#f8eef4]">
+            <input
+              type="checkbox"
+              checked={form.consignment}
+              onChange={(event) => setForm({ ...form, consignment: event.target.checked })}
+              className="h-4 w-4 accent-[#db2777]"
+            />
+            Bán hộ?
+          </label>
+          <label className="flex items-center gap-2 text-sm font-semibold text-amber-100">
+            <input
+              type="checkbox"
+              checked={form.isHot}
+              onChange={(event) => setForm({ ...form, isHot: event.target.checked })}
+              className="h-4 w-4 accent-[#f59e0b]"
+            />
+            Hot Account?
+            <span className="font-normal text-amber-200/70">(khung vàng nổi bật trên web)</span>
+          </label>
+        </div>
         <label className="text-sm">
           Trạng thái
           <select

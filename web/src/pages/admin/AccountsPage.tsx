@@ -123,7 +123,14 @@ export function AccountsPage() {
             <tbody>
               {query.data.items.map((item) => (
                 <tr key={item.id} className="border-t border-white/10">
-                  <td className="px-3 py-2 font-medium">#{item.publicCode}</td>
+                  <td className="px-3 py-2 font-medium">
+                    #{item.publicCode}
+                    {item.isHot ? (
+                      <span className="ml-1.5 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#1a1200]">
+                        Hot
+                      </span>
+                    ) : null}
+                  </td>
                   <td className="px-3 py-2">{item.gameUser}</td>
                   <td className="px-3 py-2">
                     <SecretValue value={item.gamePass} />

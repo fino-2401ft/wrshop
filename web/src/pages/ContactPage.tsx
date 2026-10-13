@@ -1,5 +1,5 @@
 const ZALO = 'https://zalo.me/0968893228';
-const FANPAGE = 'https://www.facebook.com/shoptocchienquocanh';
+const FANPAGE = 'https://www.facebook.com/qatcs';
 
 const CARDS = [
   {

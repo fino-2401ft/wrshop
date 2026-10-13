@@ -48,6 +48,9 @@ export function WelcomePopup() {
           Chào mừng khách hàng đến với Wild Rift Store. Các bạn có thể tham gia kênh Discord sau để săn acc ngon mỗi
           ngày nhé!
         </p>
+        <p className="relative mt-3 text-sm leading-6 text-amber-100/90">
+          Bên mình hỗ trợ góp acc từ 50% vào chơi, anh em thoải mái lựa nhé 🤩
+        </p>
         <a
           href={DISCORD}
           target="_blank"

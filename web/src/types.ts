@@ -21,6 +21,7 @@ export type AccountCard = {
   description: string;
   specs: AccountSpecs;
   status: AccountStatus;
+  isHot?: boolean;
   coverUrl: string | null;
   createdAt: string;
 };
@@ -46,6 +47,7 @@ export type AdminAccount = AccountDetail & {
   cost: number;
   profit: number;
   consignment: boolean;
+  isHot: boolean;
   dueAt: string | null;
   orders: {
     id: string;
