@@ -98,11 +98,19 @@ export function OrdersPage() {
   function reclaimAccount(order: OrderRow) {
     const installment = order.status === 'INSTALLMENT';
     const message = installment
-      ? `Thu lại acc #${order.accountCode}? Đơn cũ thành Bỏ góp và chỉ ghi nhận số tiền đã góp trong tháng góp. Acc mới được tạo để bạn cập nhật.`
+      ? `Thu lại acc #${order.accountCode}? Đơn cũ thành Bỏ góp. Doanh thu và lợi nhuận của tháng bán acc ghi bằng số tiền đã góp, không theo giá bán. Acc mới được tạo để bạn cập nhật.`
       : `Thu lại acc #${order.accountCode}? Đơn của người mua được giữ nguyên. Acc mới được tạo ở đầu danh sách để bạn cập nhật.`;
     if (!confirm(message)) return;
     setNotice('');
     reclaim.mutate(order.id);
+  }
+
+  function reclaimInstallment(item: { orderId: string; accountCode: number }) {
+    if (!item.orderId) return;
+    const message = `Thu lại acc #${item.accountCode}? Đơn cũ thành Bỏ góp. Doanh thu và lợi nhuận của tháng bán acc ghi bằng số tiền đã góp, không theo giá bán. Acc mới được tạo để bạn cập nhật.`;
+    if (!confirm(message)) return;
+    setNotice('');
+    reclaim.mutate(item.orderId);
   }
 
   function settleAccount(item: { orderId: string; accountCode: number }) {
@@ -151,7 +159,7 @@ export function OrdersPage() {
         <article className="rounded-2xl border border-[#f472b644] bg-[#1c1018]/95 px-5 py-4 shadow-[0_18px_36px_rgba(0,0,0,0.45)]">
           <p className="text-sm text-[#f9a8d4]">Doanh thu</p>
           <p className="mt-1 text-2xl font-bold text-white">{formatPrice(stats?.revenue ?? 0)}</p>
-          <p className="mt-1 text-xs text-slate-400">Acc đã bán và đang góp trong {label}</p>
+          <p className="mt-1 text-xs text-slate-400">Acc đã bán, đang góp và tiền đã góp khi thu lại trong {label}</p>
         </article>
         <article className="rounded-2xl border border-[#f472b644] bg-[#1c1018]/95 px-5 py-4 shadow-[0_18px_36px_rgba(0,0,0,0.45)]">
           <p className="text-sm text-[#f9a8d4]">Doanh thu thực nhận</p>
@@ -166,7 +174,7 @@ export function OrdersPage() {
         <article className="rounded-2xl border border-[#f472b644] bg-[#1c1018]/95 px-5 py-4 shadow-[0_18px_36px_rgba(0,0,0,0.45)]">
           <p className="text-sm text-[#f9a8d4]">Lợi nhuận</p>
           <p className="mt-1 text-2xl font-bold text-white">{formatPrice(stats?.profit ?? 0)}</p>
-          <p className="mt-1 text-xs text-slate-400">Tổng lợi nhuận từng acc trong {label}</p>
+          <p className="mt-1 text-xs text-slate-400">Lãi acc đã bán và số tiền đã góp khi thu lại trong {label}</p>
         </article>
         <article className="rounded-2xl border border-[#f472b644] bg-[#1c1018]/95 px-5 py-4 shadow-[0_18px_36px_rgba(0,0,0,0.45)]">
           <p className="text-sm text-[#f9a8d4]">Acc đã bán</p>
@@ -294,6 +302,7 @@ export function OrdersPage() {
                   <th className="px-3 py-2">Hạn</th>
                   <th className="px-3 py-2">Tình trạng</th>
                   <th className="px-3 py-2">Mail</th>
+                  <th className="px-3 py-2">Thu lại</th>
                   <th className="px-3 py-2">Tất toán?</th>
                   <th className="px-3 py-2">Sửa</th>
                 </tr>
@@ -313,6 +322,20 @@ export function OrdersPage() {
                     <td className="px-3 py-2 whitespace-nowrap">{formatDay(item.dueAt)}</td>
                     <td className="px-3 py-2 font-semibold">{dueText(item.daysLeft)}</td>
                     <td className="px-3 py-2">{mailText(item)}</td>
+                    <td className="px-3 py-2">
+                      <button
+                        type="button"
+                        aria-label="Thu lại"
+                        title="Thu lại"
+                        disabled={reclaim.isPending || !item.orderId}
+                        onClick={() => reclaimInstallment(item)}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-400/50 text-emerald-300 disabled:opacity-60"
+                      >
+                        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </button>
+                    </td>
                     <td className="px-3 py-2">
                       <button
                         type="button"

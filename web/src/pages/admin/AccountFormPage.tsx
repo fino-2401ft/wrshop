@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../api';
 import {
   AccountImage,
@@ -27,6 +27,7 @@ const EMPTY_SPECS: Required<AccountSpecs> = {
 };
 
 type FormState = {
+  publicCode: string;
   category: Category;
   price: string;
   description: string;
@@ -46,6 +47,7 @@ type FormState = {
 };
 
 const EMPTY: FormState = {
+  publicCode: '',
   category: 'GIA_RE',
   price: '',
   description: '',
@@ -78,6 +80,7 @@ export function AccountFormPage() {
   const { id } = useParams();
   const isNew = !id || id === 'new';
   const navigate = useNavigate();
+  const location = useLocation();
   const client = useQueryClient();
   const [form, setForm] = useState<FormState>(EMPTY);
   const profitManual = useRef(false);
@@ -105,6 +108,7 @@ export function AccountFormPage() {
     const stored = account.data.profit ?? auto;
     profitManual.current = stored !== auto;
     setForm({
+      publicCode: String(account.data.publicCode),
       category: categoryCodeForPrice(account.data.price),
       price: String(account.data.price),
       description: account.data.description,
@@ -124,9 +128,17 @@ export function AccountFormPage() {
     });
   }, [account.data]);
 
+  useEffect(() => {
+    const notice = (location.state as { notice?: string } | null)?.notice;
+    if (!notice) return;
+    setMessage(notice);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate]);
+
   const save = useMutation({
     mutationFn: async () => {
       const body = {
+        ...(isNew ? {} : { publicCode: Number(form.publicCode) }),
         category: form.category,
         price: Number(form.price),
         description: form.description,
@@ -160,6 +172,23 @@ export function AccountFormPage() {
       await client.invalidateQueries({ queryKey: ['admin-orders'] });
       if (isNew) navigate(`/admin/accounts/${saved.id}`);
       else await client.invalidateQueries({ queryKey: ['admin-account', id] });
+    },
+    onError: (err: Error) => {
+      setMessage('');
+      setError(err.message);
+    },
+  });
+
+  const reclaim = useMutation({
+    mutationFn: (orderId: string) =>
+      api<{ id: string; publicCode: number }>(`/api/admin/orders/${orderId}/reclaim`, { method: 'POST' }, true),
+    onSuccess: async (saved) => {
+      setError('');
+      await client.invalidateQueries({ queryKey: ['admin-accounts'] });
+      await client.invalidateQueries({ queryKey: ['admin-orders'] });
+      navigate(`/admin/accounts/${saved.id}`, {
+        state: { notice: `Đã thu lại. Đây là acc mới #${saved.publicCode}. Doanh thu và lợi nhuận tháng bán ghi bằng số tiền đã góp.` },
+      });
     },
     onError: (err: Error) => {
       setMessage('');
@@ -207,6 +236,13 @@ export function AccountFormPage() {
 
   function submit(event: FormEvent) {
     event.preventDefault();
+    if (!isNew) {
+      const code = Number(form.publicCode);
+      if (!Number.isInteger(code) || code < 1) {
+        setError('Mã acc phải là số nguyên dương');
+        return;
+      }
+    }
     if (!Number.isFinite(Number(form.price))) {
       setError('Giá phải là số');
       return;
@@ -239,6 +275,19 @@ export function AccountFormPage() {
     save.mutate();
   }
 
+  function reclaimAccount() {
+    const order = account.data?.orders.find((item) => item.status === 'INSTALLMENT');
+    if (!account.data || !order) return;
+    const paid = account.data.contributed ?? 0;
+    const ok = confirm(
+      `Thu lại acc #${account.data.publicCode}? Doanh thu và lợi nhuận của tháng bán acc ghi ${formatPrice(paid)}, không theo giá bán ${formatPrice(account.data.price)}. Acc mới được tạo để bạn cập nhật.`,
+    );
+    if (!ok) return;
+    setError('');
+    setMessage('');
+    reclaim.mutate(order.id);
+  }
+
   function setMoney(field: 'price' | 'cost' | 'profit', value: string) {
     setForm((current) => {
       const next = { ...current, [field]: value };
@@ -260,12 +309,20 @@ export function AccountFormPage() {
     setForm((current) => ({ ...current, specs: { ...current.specs, [key]: value } }));
   }
 
+  const canReclaim = !isNew && account.data?.status === 'RESERVED' && account.data.orders.some((order) => order.status === 'INSTALLMENT');
+
   return (
     <div>
-      <Link to="/admin" className="text-sm text-[#f9a8d4] hover:text-white">
-        ← Danh sách
-      </Link>
-      <h1 className="mt-2 text-2xl font-bold text-white">{isNew ? 'Thêm acc' : `Sửa acc #${account.data?.publicCode ?? ''}`}</h1>
+      <div className="flex items-center gap-3">
+        <Link
+          to="/admin"
+          aria-label="Quay lại"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#f472b6] text-lg leading-none text-[#f9a8d4] shadow-[0_0_14px_rgba(244,114,182,0.35)] hover:bg-[#f472b6]/15"
+        >
+          ‹
+        </Link>
+        <h1 className="text-2xl font-bold text-white">{isNew ? 'Thêm acc' : `Sửa acc #${account.data?.publicCode ?? ''}`}</h1>
+      </div>
       {account.isLoading && !isNew && <p className="mt-4 text-slate-400">Đang tải...</p>}
       <form
         onSubmit={submit}
@@ -335,6 +392,19 @@ export function AccountFormPage() {
               />
             </>
           )
+        )}
+        {!isNew && (
+          <label className="text-sm md:col-span-2">
+            Mã acc
+            <input
+              value={form.publicCode}
+              onChange={(event) => setForm({ ...form, publicCode: event.target.value })}
+              inputMode="numeric"
+              className="mt-1 w-full rounded-lg border border-white/15 px-3 py-2"
+              required
+            />
+            <span className="mt-1 block text-xs text-slate-400">Mã hiển thị trên web. Đổi mã sẽ đổi luôn mã đơn DH- tương ứng.</span>
+          </label>
         )}
         <label className="text-sm">
           Username
@@ -554,7 +624,22 @@ export function AccountFormPage() {
           >
             {save.isPending ? 'Đang lưu...' : 'Lưu acc'}
           </button>
+          {canReclaim && (
+            <button
+              type="button"
+              disabled={reclaim.isPending}
+              onClick={reclaimAccount}
+              className="ml-3 rounded-full border border-emerald-400/50 px-5 py-2.5 text-sm font-semibold text-emerald-300 disabled:opacity-60"
+            >
+              {reclaim.isPending ? 'Đang thu lại...' : 'Thu lại'}
+            </button>
+          )}
           <p className="mt-2 text-xs text-slate-400">User và mật khẩu game chỉ trả cho khách sau khi thanh toán.</p>
+          {canReclaim && (
+            <p className="mt-1 text-xs text-slate-400">
+              Thu lại ghi doanh thu và lợi nhuận của tháng bán acc bằng số tiền đã góp, rồi tạo acc mới để cập nhật.
+            </p>
+          )}
         </div>
       </form>
       {!isNew && <AccountOrders orders={account.data?.orders ?? []} />}
