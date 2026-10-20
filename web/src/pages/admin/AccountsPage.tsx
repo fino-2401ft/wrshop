@@ -15,6 +15,8 @@ export function AccountsPage() {
   const [code, setCode] = useState('');
   const [page, setPage] = useState(1);
   const [applied, setApplied] = useState({ category: '', status: '', code: '' });
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
 
   const params = new URLSearchParams({ page: String(page) });
   if (applied.category) params.set('category', applied.category);
@@ -38,22 +40,64 @@ export function AccountsPage() {
     await client.invalidateQueries({ queryKey: ['admin-accounts'] });
   }
 
+  async function exportSelling() {
+    setExportError('');
+    setExporting(true);
+    try {
+      const res = await fetch('/api/admin/accounts/export/selling', { credentials: 'include' });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { message?: string | string[] };
+        const raw = body.message;
+        throw new Error(Array.isArray(raw) ? raw.join(', ') : raw || 'Không xuất được danh sách');
+      }
+      const blob = await res.blob();
+      const stamp = new Date().toISOString().slice(0, 10);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `acc-dang-ban-${stamp}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : 'Không xuất được danh sách');
+    } finally {
+      setExporting(false);
+    }
+  }
+
   const totalPages = query.data ? Math.max(1, Math.ceil(query.data.total / query.data.pageSize)) : 1;
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-white">Danh sách acc</h1>
-        <Link
-          to="/admin/accounts/new"
-          className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#9d174d] to-[#db2777] px-4 py-2 text-sm font-semibold text-white"
-        >
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path strokeLinecap="round" d="M12 5v14M5 12h14" />
-          </svg>
-          Add Account
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => void exportSelling()}
+            disabled={exporting}
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 disabled:opacity-50"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4" />
+              <path strokeLinecap="round" d="M4 21h16" />
+            </svg>
+            {exporting ? 'Đang xuất...' : 'Xuất acc đang bán'}
+          </button>
+          <Link
+            to="/admin/accounts/new"
+            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#9d174d] to-[#db2777] px-4 py-2 text-sm font-semibold text-white"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path strokeLinecap="round" d="M12 5v14M5 12h14" />
+            </svg>
+            Add Account
+          </Link>
+        </div>
       </div>
+      {exportError && <p className="mt-3 text-sm text-rose-300">{exportError}</p>}
       <form
         className="mt-4 flex flex-wrap gap-2"
         onSubmit={(event) => {
