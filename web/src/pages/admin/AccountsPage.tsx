@@ -17,6 +17,7 @@ export function AccountsPage() {
   const [applied, setApplied] = useState({ category: '', status: '', code: '' });
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState('');
+  const [removeError, setRemoveError] = useState('');
 
   const params = new URLSearchParams({ page: String(page) });
   if (applied.category) params.set('category', applied.category);
@@ -35,9 +36,14 @@ export function AccountsPage() {
   });
 
   async function remove(id: string) {
-    if (!confirm('Xóa acc này và toàn bộ ảnh?')) return;
-    await api(`/api/admin/accounts/${id}`, { method: 'DELETE' }, true);
-    await client.invalidateQueries({ queryKey: ['admin-accounts'] });
+    if (!confirm('Xóa acc này khỏi danh sách? Acc đã bán sẽ được ẩn để giữ lịch sử đơn.')) return;
+    setRemoveError('');
+    try {
+      await api(`/api/admin/accounts/${id}`, { method: 'DELETE' }, true);
+      await client.invalidateQueries({ queryKey: ['admin-accounts'] });
+    } catch (err) {
+      setRemoveError(err instanceof Error ? err.message : 'Không xóa được acc');
+    }
   }
 
   async function exportSelling() {
@@ -98,6 +104,7 @@ export function AccountsPage() {
         </div>
       </div>
       {exportError && <p className="mt-3 text-sm text-rose-300">{exportError}</p>}
+      {removeError && <p className="mt-3 text-sm text-rose-300">{removeError}</p>}
       <form
         className="mt-4 flex flex-wrap gap-2"
         onSubmit={(event) => {
@@ -129,7 +136,7 @@ export function AccountsPage() {
           onChange={(event) => setStatus(event.target.value)}
           className="rounded-lg border border-white/15 px-3 py-2 text-sm"
         >
-          <option value="">Mọi trạng thái</option>
+          <option value="">Đang hiện (ẩn đã ẩn)</option>
           {(Object.keys(STATUS_LABEL) as AccountStatus[]).map((item) => (
             <option key={item} value={item}>
               {STATUS_LABEL[item]}
