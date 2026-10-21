@@ -90,6 +90,14 @@ export function OrdersPage() {
     },
     onError: (error: Error) => setNotice(error.message),
   });
+  const remove = useMutation({
+    mutationFn: (orderId: string) => api<{ ok: boolean; code: string }>(`/api/admin/orders/${orderId}`, { method: 'DELETE' }, true),
+    onSuccess: async (saved) => {
+      setNotice(`Đã xóa đơn ${saved.code}.`);
+      await client.invalidateQueries({ queryKey: ['admin-orders'] });
+    },
+    onError: (error: Error) => setNotice(error.message),
+  });
   const stats = query.data?.stats;
   const label = monthLabel(month);
   const dueSoon = query.data?.dueSoon ?? [];
@@ -118,6 +126,12 @@ export function OrdersPage() {
     if (!confirm(`Tất toán acc #${item.accountCode} và chuyển sang Đã bán?`)) return;
     setNotice('');
     settle.mutate(item.orderId);
+  }
+
+  function removeOrder(order: OrderRow) {
+    if (!confirm(`Xóa đơn ${order.code} (acc #${order.accountCode}) khỏi danh sách? Acc liên quan vẫn giữ nguyên.`)) return;
+    setNotice('');
+    remove.mutate(order.id);
   }
 
   return (
@@ -217,6 +231,7 @@ export function OrdersPage() {
                   <th className="px-3 py-2">Trạng thái</th>
                   <th className="px-3 py-2">Thu lại</th>
                   <th className="px-3 py-2">Sửa</th>
+                  <th className="px-3 py-2">Xóa</th>
                 </tr>
               </thead>
               <tbody>
@@ -263,6 +278,18 @@ export function OrdersPage() {
                       >
                         <PencilIcon />
                       </Link>
+                    </td>
+                    <td className="px-3 py-2">
+                      <button
+                        type="button"
+                        aria-label="Xóa"
+                        title="Xóa"
+                        disabled={remove.isPending}
+                        onClick={() => removeOrder(order)}
+                        className="inline-grid h-8 w-8 place-items-center rounded-full text-rose-300 hover:bg-white/10 disabled:opacity-60"
+                      >
+                        <TrashIcon />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -375,6 +402,17 @@ function PencilIcon() {
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" />
       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 6V4h8v2" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 6l-1 14H6L5 6" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10 11v6M14 11v6" />
     </svg>
   );
 }
