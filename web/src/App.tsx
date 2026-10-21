@@ -4,6 +4,7 @@ import { Layout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
 import { CategoryPage } from './pages/CategoryPage';
 import { DetailPage } from './pages/DetailPage';
+import { PaymentPage } from './pages/PaymentPage';
 import { ContactPage } from './pages/ContactPage';
 import { InstallmentPage } from './pages/InstallmentPage';
 import { InfoPage } from './pages/InfoPage';
@@ -27,6 +28,7 @@ export function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/shop/:slug" element={<CategoryPage />} />
             <Route path="/acc/:code" element={<DetailPage />} />
+            <Route path="/thanh-toan/:code" element={<PaymentPage />} />
             <Route path="/lien-he" element={<ContactPage />} />
             <Route path="/chinh-sach-tra-gop" element={<InstallmentPage />} />
             <Route path="/khuyen-mai" element={<InfoPage />} />

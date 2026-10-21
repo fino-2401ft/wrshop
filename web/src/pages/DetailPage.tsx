@@ -1,16 +1,36 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Link, useParams } from 'react-router-dom';
-import { api } from '../api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ApiError, api } from '../api';
 import { CategoryHeading, categoryPageTitle } from '../components/CategoryHeading';
 import { AccountDetail, STATUS_LABEL, formatPrice, specText } from '../types';
+import { ZALO_URL } from '../zalo';
 
 export function DetailPage() {
   const { code = '' } = useParams();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [buyerName, setBuyerName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
   const query = useQuery({
     queryKey: ['account', code],
     queryFn: () => api<AccountDetail>(`/api/accounts/${code}`),
+  });
+  const checkout = useMutation({
+    mutationFn: (input: { account: AccountDetail; buyerName: string; phone: string; email: string }) =>
+      api<{ code: string }>('/api/payments/checkout', {
+        method: 'POST',
+        body: JSON.stringify({
+          publicCode: input.account.publicCode,
+          buyerName: input.buyerName,
+          phone: input.phone,
+          email: input.email,
+        }),
+      }),
+    onSuccess: (payment) => navigate(`/thanh-toan/${payment.code}`),
+    onError: (err) => setError(err instanceof ApiError ? err.message : 'Không tạo được đơn thanh toán'),
   });
 
   if (query.isLoading) return <p className="text-slate-500">Đang tải acc...</p>;
@@ -85,7 +105,10 @@ export function DetailPage() {
           <div className="mt-4 grid gap-2">
             {canBuy ? (
               <button
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                  setError('');
+                  setOpen(true);
+                }}
                 className="rounded-full bg-gradient-to-r from-[#9d174d] to-[#db2777] px-6 py-2.5 text-sm font-semibold text-white"
               >
                 Mua ngay
@@ -96,7 +119,7 @@ export function DetailPage() {
               </span>
             )}
             <a
-              href="https://zalo.me/0968893228"
+              href={ZALO_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-[#0068FF] px-6 py-2.5 text-center text-sm font-semibold text-white"
@@ -128,26 +151,72 @@ export function DetailPage() {
 
       {open && (
         <div className="fixed inset-0 z-30 grid place-items-center bg-slate-950/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 text-slate-900 shadow-xl">
-            <h3 className="text-lg font-bold">Thanh toán</h3>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              Bạn vui lòng liên hệ zalo bên dưới để mua acc nhé!
+          <form
+            className="w-full max-w-md rounded-2xl bg-white p-6 text-slate-900 shadow-xl"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setError('');
+              checkout.mutate({ account, buyerName, phone, email });
+            }}
+          >
+            <h3 className="text-lg font-bold">Thanh toán {formatPrice(account.price)}</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Điền thông tin liên hệ. Sau khi thanh toán, shop gửi acc về email và hiện trên trang.
             </p>
-            <a
-              href="https://zalo.me/0968893228"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 flex w-full items-center justify-center rounded-full bg-[#0068FF] py-2.5 text-sm font-semibold text-white"
-            >
-              Liên hệ Zalo
-            </a>
+            <label className="mt-4 block text-sm font-medium" htmlFor="checkout-name">
+              Họ tên
+            </label>
+            <input
+              id="checkout-name"
+              type="text"
+              required
+              minLength={2}
+              value={buyerName}
+              onChange={(event) => setBuyerName(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              placeholder="Nguyễn Văn A"
+            />
+            <label className="mt-3 block text-sm font-medium" htmlFor="checkout-phone">
+              Zalo / Số điện thoại
+            </label>
+            <input
+              id="checkout-phone"
+              type="tel"
+              required
+              inputMode="tel"
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              placeholder="09xxxxxxxx"
+            />
+            <label className="mt-3 block text-sm font-medium" htmlFor="checkout-email">
+              Email
+            </label>
+            <input
+              id="checkout-email"
+              type="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              placeholder="ban@gmail.com"
+            />
+            {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
             <button
+              type="submit"
+              disabled={checkout.isPending}
+              className="mt-5 w-full rounded-full bg-gradient-to-r from-[#9d174d] to-[#db2777] py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+            >
+              {checkout.isPending ? 'Đang xử lý...' : 'Tiếp tục'}
+            </button>
+            <button
+              type="button"
               onClick={() => setOpen(false)}
               className="mt-2 w-full rounded-full bg-slate-900 py-2.5 text-sm font-semibold text-white"
             >
-              Đã hiểu
+              Đóng
             </button>
-          </div>
+          </form>
         </div>
       )}
     </div>

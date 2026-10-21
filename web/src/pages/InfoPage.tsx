@@ -11,8 +11,8 @@ const PAGES: Record<string, { title: string; paragraphs: string[] }> = {
   '/don-hang': {
     title: 'Đơn hàng',
     paragraphs: [
-      'Sau khi chốt mua, shop xác nhận đơn qua Zalo hoặc Facebook.',
-      'Thông tin đăng nhập được gửi theo đúng cách đã hẹn trong chính sách mua hàng hoặc chính sách trả góp.',
+      'Bấm Mua ngay, nhập email và quét QR. Khi tiền vào, web hiện thông tin acc và gửi cùng nội dung về email đó.',
+      'Sau khi nhận acc, hãy đổi thông tin liên hệ. Cần hỗ trợ thì nhắn Zalo.',
     ],
   },
   '/faq': {
@@ -33,14 +33,14 @@ const PAGES: Record<string, { title: string; paragraphs: string[] }> = {
   '/chinh-sach-mua-hang': {
     title: 'Chính sách mua hàng',
     paragraphs: [
-      'Khách xem đủ ảnh và thông tin acc trên web trước khi chốt.',
-      'Giá và cách giao tài khoản được thống nhất qua Zalo hoặc Facebook. Shop không gửi thông tin đăng nhập trước khi đã thống nhất thanh toán.',
+      'Khách xem đủ ảnh và thông tin acc trên web trước khi bấm Mua ngay.',
+      'Thanh toán bằng QR. Thông tin đăng nhập hiện trên web và được gửi email sau khi shop đối soát được tiền.',
     ],
   },
   '/chinh-sach-thanh-toan': {
     title: 'Chính sách thanh toán',
     paragraphs: [
-      'Khách thanh toán đúng số tiền đã chốt với shop.',
+      'Khách chuyển khoản đúng số tiền và đúng nội dung trên mã QR. Mã có hiệu lực 3 phút. Acc vẫn hiện cho người khác, ai thanh toán thành công trước sẽ nhận acc.',
       'Premium Account và VIP Account có thể trả góp: cọc từ 50%, tất toán sau 30 ngày hoặc 2 tháng với account lớn, không thêm lãi.',
     ],
   },

@@ -35,6 +35,7 @@ export type AccountImage = {
 
 export type AccountDetail = AccountCard & {
   images: AccountImage[];
+  forSale?: boolean;
 };
 
 export type AdminAccount = AccountDetail & {
