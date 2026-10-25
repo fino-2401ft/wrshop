@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api';
+import { Seo } from '../../components/Seo';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export function LoginPage() {
 
   return (
     <div className="mx-auto grid max-w-sm place-items-center">
+      <Seo title="Đăng nhập quản trị" description="Đăng nhập khu vực quản trị." path="/admin/login" noindex />
       <form
         onSubmit={submit}
         className="w-full rounded-2xl border border-[#f472b644] bg-[#1c1018]/95 p-6 text-[#f8eef4] shadow-[0_18px_36px_rgba(0,0,0,0.62),0_0_28px_rgba(244,114,182,0.38)]"

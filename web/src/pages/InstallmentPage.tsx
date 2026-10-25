@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Seo } from '../components/Seo';
 
 const POINTS = [
   {
@@ -22,11 +23,16 @@ const POINTS = [
 export function InstallmentPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white">Chính sách trả góp</h1>
+      <Seo
+        title="Trả góp acc tốc chiến"
+        description="Trả góp acc tốc chiến Premium/VIP tại Wild Rift Store: cọc từ 50%, tất toán 30 ngày, không lãi."
+        path="/chinh-sach-tra-gop"
+      />
+      <h1 className="text-2xl font-bold text-white">Trả góp acc tốc chiến</h1>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
-        Shop nhận trả góp cho acc Wild Rift ở danh mục Premium Account và VIP Account. Khách hàng chỉ cần cọc từ 50%
-        giá trị account, shop sẽ cấp tài khoản và mật khẩu để vào chơi, tất toán sau 30 ngày (account lớn có thể 2
-        tháng) và hoàn toàn không lấy thêm 1 đồng lãi nào.
+        Shop acc tốc chiến nhận trả góp cho acc Wild Rift ở danh mục Premium và VIP. Khách chỉ cần cọc từ 50% giá trị
+        account, shop cấp tài khoản và mật khẩu để vào chơi, tất toán sau 30 ngày (account lớn có thể 2 tháng) và không
+        lấy thêm lãi.
       </p>
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {POINTS.map((item) => (

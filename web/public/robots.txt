@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /thanh-toan
+
+Sitemap: https://furywr.com/sitemap.xml

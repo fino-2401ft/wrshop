@@ -1,3 +1,5 @@
+import { Seo } from '../components/Seo';
+
 const ZALO = 'https://zalo.me/0968893228';
 const FANPAGE = 'https://www.facebook.com/qatcs';
 
@@ -21,9 +23,14 @@ const CARDS = [
 export function ContactPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white">Liên hệ</h1>
+      <Seo
+        title="Liên hệ shop acc tốc chiến"
+        description="Liên hệ Wild Rift Store qua Zalo hoặc Facebook để tư vấn mua acc tốc chiến, giữ acc và trả góp."
+        path="/lien-he"
+      />
+      <h1 className="text-2xl font-bold text-white">Liên hệ shop acc tốc chiến</h1>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-        Chọn một kênh bên dưới. Shop trả lời để tư vấn acc và thống nhất cách thanh toán.
+        Chọn một kênh bên dưới. Shop trả lời để tư vấn acc tốc chiến và thống nhất cách thanh toán.
       </p>
       <p className="mt-4 text-lg font-bold text-white">
         Số điện thoại:{' '}

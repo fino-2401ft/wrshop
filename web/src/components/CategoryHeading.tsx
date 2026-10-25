@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 
 const PAGE_TITLE: Record<string, string> = {
-  vip: 'Premium Account',
-  VIP: 'Premium Account',
-  ngon: 'VIP Account',
-  NGON: 'VIP Account',
-  'gia-re': 'Cheap Account',
-  GIA_RE: 'Cheap Account',
+  vip: 'Acc Premium tốc chiến',
+  VIP: 'Acc Premium tốc chiến',
+  ngon: 'Acc VIP tốc chiến',
+  NGON: 'Acc VIP tốc chiến',
+  'gia-re': 'Acc tốc chiến giá rẻ',
+  GIA_RE: 'Acc tốc chiến giá rẻ',
 };
 
 export function categoryPageTitle(key: string | undefined, fallback: string) {

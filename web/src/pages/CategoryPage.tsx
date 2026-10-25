@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { api } from '../api';
 import { AccountCardView } from '../components/AccountCard';
 import { CategoryHeading, categoryPageTitle } from '../components/CategoryHeading';
+import { Seo } from '../components/Seo';
 import { AccountCard, RANKS, ShopCategory, categoryBySlug } from '../types';
 
 type ListResponse = {
@@ -83,7 +84,16 @@ export function CategoryPage() {
 
   return (
     <div>
+      <Seo
+        title={`${title} | Shop acc tốc chiến`}
+        description={`${title} đang bán tại Wild Rift Store — shop acc tốc chiến uy tín. Xem ảnh, lọc giá và mua acc Wild Rift nhanh chóng.`}
+        path={`/shop/${slug}`}
+      />
       <CategoryHeading title={title} to="/" />
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+        Danh mục {title.toLowerCase()} tại shop acc tốc chiến Wild Rift Store. Chọn acc phù hợp, thanh toán QR và nhận
+        thông tin qua email.
+      </p>
       <form
         onSubmit={(event) => apply(event)}
         className="mt-4 grid gap-3 rounded-xl border border-[#f472b644] bg-[#1c1018] p-4 text-[#f8eef4] md:grid-cols-6"

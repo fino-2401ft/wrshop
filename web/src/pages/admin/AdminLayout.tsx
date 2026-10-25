@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Navigate, Outlet } from 'react-router-dom';
 import { api } from '../../api';
+import { Seo } from '../../components/Seo';
 
 export function AdminLayout() {
   const me = useQuery({
@@ -12,5 +13,10 @@ export function AdminLayout() {
   if (me.isLoading) return <p className="text-slate-400">Đang kiểm tra phiên...</p>;
   if (me.isError) return <Navigate to="/admin/login" replace />;
 
-  return <Outlet />;
+  return (
+    <>
+      <Seo title="Quản trị" description="Khu vực quản trị Wild Rift Store." path="/admin" noindex />
+      <Outlet />
+    </>
+  );
 }

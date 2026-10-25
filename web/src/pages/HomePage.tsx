@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { api } from '../api';
 import { AccountCardView } from '../components/AccountCard';
 import { HomeSectionDivider, HomeSectionHeader } from '../components/HomeSectionHeader';
+import { Seo } from '../components/Seo';
+import { DEFAULT_DESCRIPTION } from '../seo';
 import { AccountCard, CATEGORIES, Category } from '../types';
 
 type HomeGroup = { category: Category; slug: string; title: string; accounts: AccountCard[] };
@@ -34,13 +36,25 @@ export function HomePage() {
 
   return (
     <div className="space-y-8">
+      <Seo
+        title="Shop acc tốc chiến giá rẻ, uy tín | Wild Rift Store"
+        description={DEFAULT_DESCRIPTION}
+        path="/"
+      />
       <section className="overflow-hidden rounded-2xl border border-[#f472b644] shadow-[0_18px_36px_rgba(0,0,0,0.62),0_0_28px_rgba(244,114,182,0.38)]">
-        <h1 className="sr-only">Wild Rift Store</h1>
         <img
           src="/hero.jpg?v=4"
-          alt="Wild Rift Store — Uy tín, chất lượng, nhanh chóng"
+          alt="Shop acc tốc chiến Wild Rift Store — uy tín, chất lượng, giao nhanh"
           className="block h-auto w-full"
         />
+      </section>
+
+      <section className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-wide text-white sm:text-3xl">Shop acc tốc chiến</h1>
+        <p className="max-w-3xl text-sm leading-6 text-slate-300 sm:text-base">
+          Wild Rift Store chuyên bán acc tốc chiến (Wild Rift) giá rẻ đến VIP / Premium. Xem ảnh acc trên web, thanh
+          toán QR và nhận thông tin đăng nhập qua email ngay sau khi tiền vào.
+        </p>
       </section>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">

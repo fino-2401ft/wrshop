@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import { ApiError, api } from '../api';
+import { Seo } from '../components/Seo';
 import { formatPrice } from '../types';
 import { ZALO_URL } from '../zalo';
 
@@ -56,6 +57,12 @@ export function PaymentPage() {
   const payment = query.data;
   return (
     <div className="mx-auto w-full max-w-lg">
+      <Seo
+        title={`Thanh toán acc #${payment.accountCode}`}
+        description="Trang thanh toán đơn hàng acc tốc chiến. Không công khai trên công cụ tìm kiếm."
+        path={`/thanh-toan/${payment.code}`}
+        noindex
+      />
       <h1 className="text-center text-2xl font-bold text-white">Thanh toán acc #{payment.accountCode}</h1>
       <p className="mt-2 text-center text-sm text-slate-400">{formatPrice(payment.amount)}</p>
       {payment.status === 'PAID' && payment.credentials ? (

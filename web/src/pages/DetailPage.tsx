@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ApiError, api } from '../api';
 import { CategoryHeading, categoryPageTitle } from '../components/CategoryHeading';
+import { Seo } from '../components/Seo';
 import { AccountDetail, STATUS_LABEL, formatPrice, specText } from '../types';
 import { ZALO_URL } from '../zalo';
 
@@ -48,6 +49,10 @@ export function DetailPage() {
   const account = query.data;
   const canBuy = account.status === 'AVAILABLE';
   const gallery = account.images.filter((image) => !image.isCover);
+  const categoryLabel = categoryPageTitle(
+    account.categorySlug ?? account.category,
+    account.categoryTitle ?? account.category,
+  );
   const cells: [string, string][] = [
     ['Tướng', specText(account.specs.heroes)],
     ['Skin', specText(account.specs.skins)],
@@ -59,9 +64,19 @@ export function DetailPage() {
 
   return (
     <div className="lg:grid lg:grid-cols-[320px_1fr] lg:items-start lg:gap-6">
+      <Seo
+        title={`Acc tốc chiến #${account.publicCode} — ${categoryLabel}`}
+        description={
+          account.description?.trim() ||
+          `Mua acc tốc chiến #${account.publicCode} (${categoryLabel}) tại Wild Rift Store. Giá ${formatPrice(account.price)}. Thanh toán QR, giao acc qua email.`
+        }
+        path={`/acc/${account.publicCode}`}
+        image={account.coverUrl}
+        noindex={account.status !== 'AVAILABLE'}
+      />
       <aside className="lg:sticky lg:top-20">
         <CategoryHeading
-          title={categoryPageTitle(account.categorySlug ?? account.category, account.categoryTitle ?? account.category)}
+          title={categoryLabel}
           to={`/shop/${account.categorySlug ?? account.category}`}
         />
         <section
