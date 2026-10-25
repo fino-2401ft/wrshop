@@ -49,13 +49,7 @@ export function HomePage() {
         />
       </section>
 
-      <section className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-wide text-white sm:text-3xl">Shop acc tốc chiến</h1>
-        <p className="max-w-3xl text-sm leading-6 text-slate-300 sm:text-base">
-          Wild Rift Store chuyên bán acc tốc chiến (Wild Rift) giá rẻ đến VIP / Premium. Xem ảnh acc trên web, thanh
-          toán QR và nhận thông tin đăng nhập qua email ngay sau khi tiền vào.
-        </p>
-      </section>
+      <h1 className="sr-only">Shop acc tốc chiến — Wild Rift Store</h1>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {(query.data?.categories ?? FALLBACK_TILES).map((item) => (
