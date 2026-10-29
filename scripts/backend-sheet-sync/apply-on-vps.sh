@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT="${1:-/home/dev/wrshop_BE}"
 PATCH_DIR="$(cd "$(dirname "$0")" && pwd)"
 KEY='753e6b218c5fe809b8a4271092d64559baaccc26b0f277e5'
+APPS_URL='https://script.google.com/macros/s/AKfycbzlekWyWUDzW5zuUBVdLp13lyNZ4iitm6p4IR6JRase0XZN07LbzId8UCPYRcgAZue8Bg/exec'
 
 mkdir -p "$ROOT/src/integrations"
 cp "$PATCH_DIR/integrations/"*.ts "$ROOT/src/integrations/"
@@ -17,10 +18,14 @@ cp "$PATCH_DIR/admin-orders.controller.ts" "$ROOT/src/orders/admin-orders.contro
 
 cd "$ROOT"
 if ! grep -q '^SHEET_SYNC_KEY=' .env 2>/dev/null; then
-  printf '\nSHEET_SYNC_KEY=%s\nSHEET_APPS_SCRIPT_URL=\n' "$KEY" >> .env
+  printf '\nSHEET_SYNC_KEY=%s\nSHEET_APPS_SCRIPT_URL=%s\n' "$KEY" "$APPS_URL" >> .env
 else
   sed -i "s|^SHEET_SYNC_KEY=.*|SHEET_SYNC_KEY=$KEY|" .env
-  grep -q '^SHEET_APPS_SCRIPT_URL=' .env || echo 'SHEET_APPS_SCRIPT_URL=' >> .env
+  if grep -q '^SHEET_APPS_SCRIPT_URL=' .env; then
+    sed -i "s|^SHEET_APPS_SCRIPT_URL=.*|SHEET_APPS_SCRIPT_URL=$APPS_URL|" .env
+  else
+    echo "SHEET_APPS_SCRIPT_URL=$APPS_URL" >> .env
+  fi
 fi
 
 npm ci
