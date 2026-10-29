@@ -15,7 +15,7 @@ Chỉ tô cột **Username** (cột C) của tab `gid=183243105`.
 Trong `/home/dev/wrshop_BE/.env`:
 
 ```env
-SHEET_SYNC_KEY=doi-chuoi-bi-mat-dai
+SHEET_SYNC_KEY=753e6b218c5fe809b8a4271092d64559baaccc26b0f277e5
 SHEET_APPS_SCRIPT_URL=
 ```
 

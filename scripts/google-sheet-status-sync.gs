@@ -19,7 +19,7 @@ var CONFIG = {
   // API shop (qua Cloudflare / domain public)
   API_BASE: 'https://furywr.com',
   // Phải trùng SHEET_SYNC_KEY trên VPS
-  SYNC_KEY: 'DOI_CHUOI_BI_MAT_NAY',
+  SYNC_KEY: '753e6b218c5fe809b8a4271092d64559baaccc26b0f277e5',
   // gid tab ĐANG BÁN (từ URL #gid=...)
   SHEET_GID: 183243105,
   // Cột Username (A=1, B=2, C=3)
