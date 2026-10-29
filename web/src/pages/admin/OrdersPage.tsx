@@ -24,7 +24,7 @@ type ListResponse = {
   stats: {
     revenue: number;
     soldAccounts: number;
-    installmentAccounts: number;
+    inventoryCost: number;
     remainingInstallment: number;
     received: number;
     profit: number;
@@ -196,9 +196,9 @@ export function OrdersPage() {
           <p className="mt-1 text-xs text-slate-400">Số acc chuyển sang đã bán trong {label}</p>
         </article>
         <article className="rounded-2xl border border-[#f472b644] bg-[#1c1018]/95 px-5 py-4 shadow-[0_18px_36px_rgba(0,0,0,0.45)]">
-          <p className="text-sm text-[#f9a8d4]">Acc đang góp</p>
-          <p className="mt-1 text-2xl font-bold text-white">{stats?.installmentAccounts ?? 0}</p>
-          <p className="mt-1 text-xs text-slate-400">Số acc đang góp trên hệ thống</p>
+          <p className="text-sm text-[#f9a8d4]">Tổng vốn đang bán</p>
+          <p className="mt-1 text-2xl font-bold text-white">{formatPrice(stats?.inventoryCost ?? 0)}</p>
+          <p className="mt-1 text-xs text-slate-400">Tổng tiền vốn acc đang bán (không gồm bán hộ)</p>
         </article>
       </div>
       {notice && <p className="mt-3 text-sm text-[#f9a8d4]">{notice}</p>}
