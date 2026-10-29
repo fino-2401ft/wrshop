@@ -69,16 +69,27 @@ export class SheetSyncService {
   async notifyAppsScript(reason: string) {
     const url = this.appsScriptUrl();
     if (!url) return;
+    const body = JSON.stringify({
+      action: 'sync',
+      key: this.syncKey(),
+      reason,
+    });
     try {
-      const res = await fetch(url, {
+      // Google Web App thường 302; follow thủ công giữ POST (fetch mặc định có thể đổi thành GET).
+      let res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'sync',
-          key: this.syncKey(),
-          reason,
-        }),
+        body,
+        redirect: 'manual',
       });
+      const loc = res.headers.get('location');
+      if (loc && res.status >= 300 && res.status < 400) {
+        res = await fetch(loc, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+        });
+      }
       if (!res.ok) {
         const text = await res.text().catch(() => '');
         this.logger.warn(`Sheet sync thất bại (${reason}): HTTP ${res.status} ${text.slice(0, 200)}`);
