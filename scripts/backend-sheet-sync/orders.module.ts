@@ -1,0 +1,13 @@
+import { Module } from '@nestjs/common';
+import { IntegrationsModule } from '../integrations/integrations.module';
+import { AdminOrdersController } from './admin-orders.controller';
+import { InstallmentReminderService } from './installment-reminder.service';
+import { MailService } from './mail.service';
+
+@Module({
+  imports: [IntegrationsModule],
+  controllers: [AdminOrdersController],
+  providers: [MailService, InstallmentReminderService],
+  exports: [MailService],
+})
+export class OrdersModule {}
